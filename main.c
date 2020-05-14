@@ -42,8 +42,46 @@ void exchange_sort(int *array, int arraySize) {
     }
 }
 
-void merge_sort() {
+void merge(int frontArraySize, int rearArraySize,
+           const int *frontArray, const int *rearArray, int *array) {
+    /* input two sorted arrays, and merge them into one sorted array */
+    int countFront = 0, countRear = 0, countArray = 0;
+    while (countFront < frontArraySize && countRear < rearArraySize) {
+        if (frontArray[countFront] < rearArray[countRear]) {
+            array[countArray++] = frontArray[countFront];
+            countFront++;
+        } else {
+            array[countArray++] = rearArray[countRear];
+            countRear++;
+        }
+    }
+    /* Copy the rest into array */
+    if (countFront == frontArraySize) {
+        for (int i = countRear; i < rearArraySize; i++) {
+            array[countArray++] = rearArray[i];
+        }
+    } else {
+        for (int i = countFront; i < frontArraySize; i++) {
+            array[countArray++] = frontArray[i];
+        }
+    }
+    printArray(array, frontArraySize + rearArraySize);
+}
 
+void merge_sort(int *array, int arraySize) {
+    if (arraySize > 1) {
+        int frontArraySize = arraySize / 2;
+        int rearArraySize = arraySize - frontArraySize;
+        int *frontArray = (int *) malloc(sizeof(int) * frontArraySize);
+        int *rearArray = (int *) malloc(sizeof(int) * rearArraySize);
+        for (int i = 0; i < frontArraySize; i++)
+            frontArray[i] = array[i];
+        for (int j = 0; j < rearArraySize; j++)
+            rearArray[j] = array[frontArraySize + j];
+        merge_sort(frontArray, frontArraySize);
+        merge_sort(rearArray, rearArraySize);
+        merge(frontArraySize, rearArraySize, frontArray, rearArray, array);
+    }
 }
 
 void quick_sort() {
@@ -69,6 +107,10 @@ int main() {
     /* Init random seed */
     srand(time(NULL));
 //    srand(5);
+
+//    int fa[5] = {1, 2, 3, 5, 5};
+//    int ra[6] = {1, 1, 2, 3, 5, 5};
+//    int *a = (int *) malloc(sizeof(int) * 11);
 
     printf("======= Basic =======\n");
     printf("Array size: ");
@@ -138,7 +180,7 @@ int main() {
             break;
         case 2: // merge sort
             START = clock();
-            merge_sort();
+            merge_sort(array, (int) ARRAY_SIZE);
             END = clock();
             break;
         case 3: // quick sort

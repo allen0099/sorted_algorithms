@@ -141,6 +141,21 @@ void quick_sort(tArray *array) {
     printArray(array);
 }
 
+void counting_sort(tArray *array, int min, int max) {
+    unsigned int index = 0;
+    unsigned short *count = calloc(max - min + 1, sizeof(unsigned short));
+    for (int i = 0; i < array->size; i++) {
+        count[array->item[i] - min]++;
+    }
+    for (int i = 0; i < max - min + 1; i++) {
+        while (count[i]--) {
+            array->item[index++] = min + i;
+        }
+    }
+    printArray(array);
+    free(count);
+}
+
 int main() {
     double TIME_SHIFT[2];
     long CONST_NUM[3];
@@ -226,7 +241,7 @@ int main() {
             break;
         case 4: // counting sort
             TIME_SHIFT[START] = clock();
-//            a_sort(); // implement this
+            counting_sort(array, (int) CONST_NUM[MIN], (int) CONST_NUM[MAX]);
             TIME_SHIFT[STOP] = clock();
             break;
         case 5: // heap sort

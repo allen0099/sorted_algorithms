@@ -156,6 +156,32 @@ void counting_sort(tArray *array, int min, int max) {
     free(count);
 }
 
+void HeapAdjust(int a[], int s, int m) {
+    /* https://www.twblogs.net/a/5b888b102b71775d1cdcef5a */
+    int rc, j;
+    rc = a[s];
+    for (j = 2 * s; j <= m; j = j * 2) {
+        if (j < m && a[j] < a[j + 1]) j++; // j爲較大的記錄的下標
+        if (rc > a[j]) break;
+        a[s] = a[j];
+        s = j;
+    }
+    a[s] = rc; // 插入
+}
+
+void heap_sort(tArray *array) {
+    /* https://www.twblogs.net/a/5b888b102b71775d1cdcef5a */
+    int i;
+    for (i = array->size / 2; i > 0; i--) {
+        HeapAdjust(array->item, i, array->size);
+    }
+    for (i = array->size; i > 0; i--) {
+        swap(&array->item[1], &array->item[i]);
+        HeapAdjust(array->item, 1, i - 1); // 重新調整爲頂堆
+        printArray(array);
+    }
+}
+
 int main() {
     double TIME_SHIFT[2];
     long CONST_NUM[3];
@@ -166,8 +192,8 @@ int main() {
     char *ptr;
 
     /* Init random seed */
-    srand(time(NULL));
-//    srand(5);
+//    srand(time(NULL));
+    srand(5);
 
     printf("======= Basic =======\n");
     printf("Array size: ");
@@ -246,7 +272,7 @@ int main() {
             break;
         case 5: // heap sort
             TIME_SHIFT[START] = clock();
-//            b_sort(); // implement this
+            heap_sort(array);
             TIME_SHIFT[STOP] = clock();
             break;
         default:
